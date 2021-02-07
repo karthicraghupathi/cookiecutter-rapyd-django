@@ -1,0 +1,6 @@
+{
+    "project_name": "Django Boilerplate",
+    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+    "project_directory": "{{ cookiecutter.project_slug }}_project",
+    "project_description": "Django Boilerplate contains all the boilerplate you need to create a Django application."
+}
