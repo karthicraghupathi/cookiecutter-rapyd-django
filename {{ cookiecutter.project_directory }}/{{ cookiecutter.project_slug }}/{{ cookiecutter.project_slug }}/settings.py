@@ -77,7 +77,11 @@ sys.excepthook = handle_exception
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# The Django root directory
+BASE_DIR = Path(__file__).resolve().parent.parent
+# The project root directory typically one level above the Django root directory
+PROJECT_DIR = BASE_DIR.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -140,7 +144,7 @@ WSGI_APPLICATION = "{{ cookiecutter.project_slug }}.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "{{ cookiecutter.project_slug }}" / "db.sqlite3",
+        "NAME": PROJECT_DIR / "{{ cookiecutter.project_slug }}" / "db.sqlite3",
     }
 }
 
@@ -183,4 +187,4 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_ROOT = PROJECT_DIR / "static"
