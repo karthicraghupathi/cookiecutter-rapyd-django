@@ -25,14 +25,6 @@ PROJECT_NAME = "{{ cookiecutter.project_name }}"
 
 
 # Logging setup
-
-# Add new TRACE logging level
-logging.TRACE = 5
-logging.addLevelName(logging.TRACE, "TRACE")
-logging.Logger.trace = partialmethod(logging.Logger.log, logging.TRACE)
-logging.trace = partial(logging.log, logging.TRACE)
-
-# Configure logging
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -47,14 +39,14 @@ LOGGING = {
         },
         "null": {"class": "logging.NullHandler"},
     },
-    "loggers": {"": {"handlers": ["console"], "level": "TRACE"}},
+    "loggers": {"": {"handlers": ["console"], "level": "DEBUG"}},
     "django": {
         "handlers": ["console"],
-        "level": "TRACE",
+        "level": "DEBUG",
     },
     "django.server": {
         "handlers": ["null"],
-        "level": "TRACE",
+        "level": "DEBUG",
         "propagate": False,
     },
 }
