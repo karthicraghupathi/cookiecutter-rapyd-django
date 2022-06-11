@@ -16,7 +16,6 @@ from pathlib import Path
 
 from dotenv import find_dotenv, load_dotenv
 
-
 # Load environment variables from the .env file
 load_dotenv(find_dotenv(filename=".env", raise_error_if_not_found=True, usecwd=False))
 
