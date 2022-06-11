@@ -68,7 +68,6 @@ sys.excepthook = handle_exception
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-
 # The Django root directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 # The project root directory typically one level above the Django root directory
@@ -168,8 +167,6 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 
@@ -179,3 +176,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 STATIC_ROOT = PROJECT_DIR / "static"
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
