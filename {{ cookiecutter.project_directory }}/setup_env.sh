@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
 
-echo 'LOG_LEVEL="INFO"' > .env
-echo DJANGO_SECRET_KEY=\"`base64 /dev/urandom | head -c50`\" >> .env
+{
+    echo
+    echo 'LOG_LEVEL="INFO"'
+    echo
+    echo DJANGO_SECRET_KEY=\"`base64 /dev/urandom | head -c50`\"
+    echo
+    echo 'DEBUG="True"'
+    echo
+    echo DATABASE_URL=\"sqlite:///`pwd`/db.sqlite3\"
+    echo
+} >> .env

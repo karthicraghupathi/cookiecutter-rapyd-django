@@ -9,15 +9,16 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 """
 
 import logging
-import os
 import sys
 from functools import partial, partialmethod
 from pathlib import Path
 
-from dotenv import find_dotenv, load_dotenv
+from environs import Env
 
 # Load environment variables from the .env file
-load_dotenv(find_dotenv(filename=".env", raise_error_if_not_found=True, usecwd=False))
+env = Env()
+env.read_env()
+
 
 # Setup default variables
 PROJECT_NAME = "{{ cookiecutter.project_name }}"
@@ -33,7 +34,7 @@ LOGGING = {
     "handlers": {
         "console": {
             "formatter": "simple",
-            "level": os.environ.get("LOG_LEVEL", "INFO"),
+            "level": env.log_level("LOG_LEVEL", "INFO"),
             "class": "logging.StreamHandler",
         },
         "null": {"class": "logging.NullHandler"},
@@ -78,10 +79,10 @@ PROJECT_DIR = BASE_DIR.parent
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = TEMPLATE_DEBUG = env.bool("DEBUG", True)
 
 ALLOWED_HOSTS = []
 
@@ -107,7 +108,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "{{ cookiecutter.project_slug }}.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -125,17 +126,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "{{ cookiecutter.project_slug }}.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": PROJECT_DIR / "{{ cookiecutter.project_slug }}" / "db.sqlite3",
-    }
+    "default": env.dj_db_url(
+        "DATABASE_URL",
+        "sqlite:///{}".format(PROJECT_DIR / "db.sqlite3"),
+    )
 }
 
 
