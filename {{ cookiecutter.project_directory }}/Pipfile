@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 django = ">=3.2,<3.3"
 environs = {extras = ["django"], version = "*"}
+django-rapyd-modernauth = "*"
 
 [dev-packages]
 pre-commit = "*"

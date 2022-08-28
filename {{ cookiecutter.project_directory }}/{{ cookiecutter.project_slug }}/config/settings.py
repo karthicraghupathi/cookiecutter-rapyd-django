@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "modernauth",
 ]
 
 MIDDLEWARE = [
@@ -178,7 +179,14 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = PROJECT_DIR / "static"
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Setup custom user model and use email as username
+# https://github.com/karthicraghupathi/django_rapyd_modernauth
+
+AUTH_USER_MODEL = "modernauth.User"
