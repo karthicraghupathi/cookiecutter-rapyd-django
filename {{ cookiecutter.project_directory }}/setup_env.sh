@@ -4,7 +4,7 @@
     echo
     echo 'LOG_LEVEL="INFO"'
     echo
-    echo DJANGO_SECRET_KEY=\"`base64 /dev/urandom | head -c50`\"
+    echo DJANGO_SECRET_KEY=\"`head -c50 < /dev/urandom | base64`\"
     echo
     echo 'DEBUG="True"'
     echo
