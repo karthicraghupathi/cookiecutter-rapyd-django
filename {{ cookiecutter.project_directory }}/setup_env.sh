@@ -8,6 +8,8 @@
     echo
     echo 'DEBUG="True"'
     echo
+    echo ALLOWED_HOSTS=
+    echo
     echo DATABASE_URL=\"sqlite:///`pwd`/db.sqlite3\"
     echo
 } >> .env
