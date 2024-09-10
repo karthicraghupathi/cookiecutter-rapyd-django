@@ -1,3 +1,5 @@
 [flake8]
 max-complexity = 10
 ignore = E501, F403, F401, W503
+max-line-length = 88  # Match Black's default line length
+extend-ignore = E203  # Ignore whitespace before ':' (Black formats this way)
