@@ -30,11 +30,12 @@ EXPECTED_FILES = [
     ".env.example",
     ".gitignore",
     ".pre-commit-config.yaml",
+    "AGENTS.md",
     "gunicorn_start",
     "LICENSE",
     "Makefile",
     "pyproject.toml",
-    "readme.md",
+    "README.md",
     "supervisor.conf",
     f"{DEFAULT_SLUG}/manage.py",
     f"{DEFAULT_SLUG}/config/__init__.py",
@@ -61,6 +62,9 @@ OBSOLETE_FILES = [
     ".flake8",
     ".isort.cfg",
     "setup_env.sh",
+    # Note: readme.md → README.md rename is verified by README.md in EXPECTED_FILES.
+    # macOS APFS is case-insensitive so asserting readme.md is absent would always
+    # fail when README.md exists.
 ]
 
 
