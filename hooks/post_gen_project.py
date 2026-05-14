@@ -18,6 +18,7 @@ from pathlib import Path
 
 PROJECT_DIR = Path.cwd()
 PROJECT_SLUG = {{cookiecutter.project_slug | tojson}}
+PYTHON_VERSION = {{cookiecutter.python_version | tojson}}
 
 
 def fail(message: str) -> None:
@@ -93,7 +94,9 @@ def main() -> None:
     create_env_file()
 
     run(["git", "init", "-b", "main"])
-    run(["uv", "sync", "--all-groups"])
+    run(["git", "config", "user.email", "scaffold@localhost"])
+    run(["git", "config", "user.name", "Cookiecutter Bootstrap"])
+    run(["uv", "sync", "--all-groups", "--python", PYTHON_VERSION])
     run(["git", "add", "."])
     run(["uv", "run", "pre-commit", "install"])
     run_pre_commit_with_autofix_handling()
