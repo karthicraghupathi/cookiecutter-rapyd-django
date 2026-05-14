@@ -26,6 +26,9 @@ select = ["E", "F", "W", "I", "B", "UP", "S"]
 ignore = ["E501", "S101"]
 per-file-ignores = {"tests/*" = ["S101"]}
 
+[tool.ruff.lint.isort]
+known-first-party = ["{{ cookiecutter.project_slug }}"]
+
 [tool.ruff.format]
 # Black-compatible defaults
 
