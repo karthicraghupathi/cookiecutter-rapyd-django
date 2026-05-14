@@ -1,17 +1,14 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
 default_language_version:
   python: python3
 exclude: |
   (?x)(
-    migrations/|
-    .idea/|
-    venv/|
-    .git/
+    \.venv/|
+    \.git/|
+    \{\{\s*cookiecutter\.project_directory\s*\}\}/
   )
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-json
@@ -32,7 +29,7 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
-  - repo: https://github.com/karthicraghupathi/pipenv-requirements-pre-commit
-    rev: 0.0.1
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.12
     hooks:
-    - id: pipenv-requirements
+      - id: uv-lock

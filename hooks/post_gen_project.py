@@ -1,0 +1,105 @@
+"""Cookiecutter post-generation hook.
+
+Runs after the template is rendered, in the generated project's directory:
+- Creates .env from .env.example with a freshly generated SECRET_KEY.
+- Initializes a git repo and bootstraps the uv venv.
+- Installs and runs pre-commit (best-effort; non-fatal).
+
+Cross-platform: uses subprocess + pathlib instead of bash.
+"""
+
+from __future__ import annotations
+
+import secrets
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+PROJECT_DIR = Path.cwd()
+PROJECT_SLUG = {{cookiecutter.project_slug | tojson}}
+
+
+def fail(message: str) -> None:
+    print(f"\033[31m[post-gen hook] {message}\033[0m", file=sys.stderr)
+    sys.exit(1)
+
+
+def info(message: str) -> None:
+    print(f"[post-gen hook] {message}")
+
+
+def require_command(cmd: str, install_hint: str) -> None:
+    if shutil.which(cmd) is None:
+        fail(f"`{cmd}` not found on PATH. Install: {install_hint}")
+
+
+def create_env_file() -> None:
+    """Copy .env.example to .env, replacing the placeholder SECRET_KEY."""
+    src = PROJECT_DIR / ".env.example"
+    dst = PROJECT_DIR / ".env"
+    if not src.exists():
+        return
+    if dst.exists():
+        info(".env already exists — skipping")
+        return
+    secret_key = secrets.token_urlsafe(50)
+    content = src.read_text(encoding="utf-8").replace(
+        "DJANGO_SECRET_KEY=changeme",
+        f"DJANGO_SECRET_KEY={secret_key}",
+    )
+    dst.write_text(content, encoding="utf-8")
+    info("Created .env with a random DJANGO_SECRET_KEY")
+
+
+def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
+    info(f"$ {' '.join(cmd)}")
+    return subprocess.run(cmd, cwd=PROJECT_DIR, check=check)  # noqa: S603
+
+
+def run_pre_commit_with_autofix_handling() -> None:
+    """Run `pre-commit run --all-files`, treating auto-fix exits as non-fatal.
+
+    Pre-commit exits non-zero both when a hook auto-fixes files and when a hook
+    genuinely fails. A second pass disambiguates: if the second pass is clean,
+    the first pass was just auto-fixing. If the second pass also fails, surface
+    it as a warning (still non-fatal — the project is usable).
+    """
+    info("Running pre-commit on all files (best-effort)...")
+    first = run(["uv", "run", "pre-commit", "run", "--all-files"], check=False)
+    if first.returncode == 0:
+        return
+
+    info("First pre-commit pass exited non-zero; checking if it was auto-fix...")
+    second = run(["uv", "run", "pre-commit", "run", "--all-files"], check=False)
+    if second.returncode == 0:
+        info(
+            "pre-commit auto-fixed some files on the first pass; second pass "
+            "is clean. Review and re-stage before committing."
+        )
+        return
+
+    print(
+        "\033[33m[post-gen hook] pre-commit hooks are still failing after a "
+        "second pass. Review hook output above and fix before committing.\033[0m",
+        file=sys.stderr,
+    )
+
+
+def main() -> None:
+    require_command("git", "https://git-scm.com/downloads")
+    require_command("uv", "https://docs.astral.sh/uv/getting-started/installation/")
+
+    create_env_file()
+
+    run(["git", "init", "-b", "main"])
+    run(["uv", "sync", "--all-groups"])
+    run(["git", "add", "."])
+    run(["uv", "run", "pre-commit", "install"])
+    run_pre_commit_with_autofix_handling()
+
+    info(f"Project ready at {PROJECT_DIR}")
+
+
+if __name__ == "__main__":
+    main()

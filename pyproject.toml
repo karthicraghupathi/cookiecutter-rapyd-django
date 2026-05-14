@@ -1,15 +1,22 @@
-[tool.black]
-include = '\.pyi?$'
-exclude = '''
-/(
-  \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+[project]
+name = "cookiecutter-rapyd-django"
+version = "1.0.0"
+description = "Cookiecutter template for a Django project."
+requires-python = ">=3.10"
+authors = [{name = "Karthic Raghupathi"}]
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "cookiecutter",
+    "pytest",
+    "pytest-cookies",
+    "pre-commit",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["test_cookiecutter.py"]
+python_files = ["test_*.py"]
+# Don't recurse into the cookiecutter template directory; its tests/ contains
+# Jinja syntax that pytest can't import.
+norecursedirs = ["{{*"]
