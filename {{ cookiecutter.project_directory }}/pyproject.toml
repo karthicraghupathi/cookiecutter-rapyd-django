@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pre-commit", "ruff"]
+dev = ["pre-commit", "pytest", "ruff"]
 
 [tool.ruff]
 line-length = 88
