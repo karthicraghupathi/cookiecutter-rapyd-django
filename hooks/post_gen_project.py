@@ -97,6 +97,8 @@ def main() -> None:
     run(["git", "add", "."])
     run(["uv", "run", "pre-commit", "install"])
     run_pre_commit_with_autofix_handling()
+    run(["git", "add", "."])
+    run(["git", "commit", "-m", "chore: initial project scaffold"])
 
     info(f"Project ready at {PROJECT_DIR}")
 
