@@ -24,12 +24,14 @@ repos:
       - id: ruff-check
         args: [--fix]
       - id: ruff-format
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.20.2
+  - repo: local
     hooks:
       - id: mypy
-        additional_dependencies: ["django-stubs[compatible-mypy]"]
-        args: ["--config-file=pyproject.toml"]
+        name: mypy
+        entry: uv run mypy .
+        language: system
+        types: [python]
+        pass_filenames: false
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.11.14
     hooks:
