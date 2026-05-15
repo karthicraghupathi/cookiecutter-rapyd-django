@@ -27,9 +27,10 @@ A new Django project pre-configured with:
 - **`modernauth`** — a custom `User` model with email as the username field
   (`AUTH_USER_MODEL = "modernauth.User"`).
 - **ruff** for lint + format (replaces black + isort + flake8).
-- **pre-commit** wired up with ruff hooks, standard hygiene hooks, and
-  `uv-lock` / `uv-export` so committed `requirements.txt` and `requirements-dev.txt`
-  stay in sync with `uv.lock`.
+- **mypy + django-stubs** for type checking (moderate strictness; django-stubs plugin
+  wired to `config.settings`).
+- **pre-commit** wired up with ruff, mypy, and uv hooks — `uv-lock` / `uv-export`
+  keep committed `requirements.txt` and `requirements-dev.txt` in sync with `uv.lock`.
 - **Logging** pre-configured: console handler + global `sys.excepthook` so uncaught
   exceptions are always logged before exit.
 - **Supervisor + Gunicorn** deploy configuration (`supervisor.conf`, `gunicorn_start`).
