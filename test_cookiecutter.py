@@ -24,7 +24,11 @@ import pytest
 
 # Strip parent-process venv/Python pins so uv commands in the generated project
 # use the project's own .venv rather than the test runner's interpreter.
-_ISOLATED_ENV = {k: v for k, v in os.environ.items() if k not in ("VIRTUAL_ENV", "VIRTUAL_ENV_PROMPT", "UV_PYTHON")}
+_ISOLATED_ENV = {
+    k: v
+    for k, v in os.environ.items()
+    if k not in ("VIRTUAL_ENV", "VIRTUAL_ENV_PROMPT", "UV_PYTHON")
+}
 
 # Default slug derived from the default project_name "Django Boilerplate".
 DEFAULT_SLUG = "django_boilerplate"
@@ -75,7 +79,9 @@ OBSOLETE_FILES = [
 
 
 def _run(cmd: list[str], cwd: Path) -> subprocess.CompletedProcess:
-    return subprocess.run(cmd, cwd=cwd, env=_ISOLATED_ENV, capture_output=True, text=True)
+    return subprocess.run(
+        cmd, cwd=cwd, env=_ISOLATED_ENV, capture_output=True, text=True
+    )
 
 
 # ---------------------------------------------------------------------------
