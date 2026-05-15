@@ -295,15 +295,26 @@ def test_generated_repo_has_no_local_git_identity(cookies):
 
 
 def test_github_workflow_copied_verbatim(cookies):
-    """The inner .github/ is in _copy_without_render — GitHub Actions ${{ }} expressions
-    must survive unchanged, not be mangled by Jinja2 rendering."""
+    """GitHub Actions ${{ }} expressions must survive Jinja rendering unchanged.
+
+    The inner workflow uses {% raw %}...{% endraw %} blocks to protect GitHub
+    expressions while still allowing {{ cookiecutter.* }} tokens to render.
+    """
     result = cookies.bake()
 
     assert result.exit_code == 0, result.exception
     workflow = (result.project_path / ".github/workflows/test.yml").read_text()
-    # These GitHub Actions expression tokens would be wiped if Jinja processed the file.
     assert "${{ github.workflow }}" in workflow
     assert "${{ matrix.python-version }}" in workflow
+
+
+def test_python_version_renders_in_ci_matrix(cookies):
+    """python_version drives the CI matrix in the generated project's workflow."""
+    result = cookies.bake(extra_context={"python_version": "3.11"})
+
+    assert result.exit_code == 0, result.exception
+    workflow = (result.project_path / ".github/workflows/test.yml").read_text()
+    assert 'python-version: ["3.11"]' in workflow
 
 
 # ---------------------------------------------------------------------------

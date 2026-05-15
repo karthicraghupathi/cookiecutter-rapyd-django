@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: {% raw %}${{ github.workflow }}-${{ github.ref }}{% endraw %}
   cancel-in-progress: true
 
 jobs:
@@ -15,25 +15,28 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v6.0.2
+      - uses: astral-sh/setup-uv@v8.1.0
         with:
+          python-version: "3.12"
           enable-cache: true
+      - name: Install dependencies
+        run: uv sync --all-groups
       - run: uv run ruff check .
       - run: uv run ruff format --check .
 
   test:
-    name: Test / Python ${{ matrix.python-version }}
+    name: {% raw %}Test / Python ${{ matrix.python-version }}{% endraw %}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["{{ cookiecutter.python_version }}"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v6.0.2
+      - uses: astral-sh/setup-uv@v8.1.0
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
           enable-cache: true
       - name: Install dependencies
         run: uv sync --all-groups
