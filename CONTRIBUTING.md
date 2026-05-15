@@ -38,10 +38,11 @@ PyPI; subsequent runs use uv's local cache and are much faster.
 
 ## Code style
 
-ruff handles lint + format. Pre-commit runs both on every commit. If pre-commit fails,
-run these locally first:
+ruff handles lint + format; mypy handles type checking. Pre-commit runs all three on
+every commit. If pre-commit fails, run these locally first:
 
 ```bash
 uv run ruff check --fix .
 uv run ruff format .
+uv run mypy .
 ```

@@ -1,5 +1,9 @@
 # Cookiecutter Rapyd Django
 
+[![Tests](https://github.com/karthicraghupathi/cookiecutter-rapyd-django/actions/workflows/test.yml/badge.svg)](https://github.com/karthicraghupathi/cookiecutter-rapyd-django/actions/workflows/test.yml)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](#supported-python-versions)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+
 A [Cookiecutter](https://cookiecutter.readthedocs.io/) template for Django projects.
 
 ## Quickstart
