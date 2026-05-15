@@ -326,6 +326,14 @@ def test_python_keyword_slug_rejected(cookies):
     assert result.exit_code != 0
 
 
+def test_non_ascii_slug_rejected(cookies):
+    """A non-ASCII slug passes str.isidentifier() but breaks PEP 621
+    metadata and uv sync — the pre-gen hook must reject it."""
+    result = cookies.bake(extra_context={"project_slug": "café_app"})
+
+    assert result.exit_code != 0
+
+
 def test_unsafe_chars_in_project_name_rejected(cookies):
     """Quotes in project_name break generated TOML — rejected by pre-gen hook."""
     result = cookies.bake(extra_context={"project_name": 'Bad"Name'})

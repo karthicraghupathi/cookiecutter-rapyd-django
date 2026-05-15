@@ -7,8 +7,8 @@ of producing a broken project. Templated values are rendered via Jinja's
 before validation runs.
 
 Validations:
-- `project_slug` must be a valid Python identifier (importable as a module)
-  and not a Python reserved keyword.
+- `project_slug` must be a valid ASCII Python identifier (importable as a
+  module) and not a Python reserved keyword.
 - `project_name`, `author_name`, and `project_description` must not contain
   characters that would surprise downstream consumers (quotes, backslashes,
   control chars).
@@ -34,6 +34,11 @@ PROJECT_DESCRIPTION = {{cookiecutter.project_description | tojson}}
 # whitespace; requires a TLD of 2+ ASCII letters.
 EMAIL_RE = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$")
 
+# Slug becomes a package dir, an importable module, AND the PEP 621
+# `name =` field. str.isidentifier() accepts non-ASCII (UAX-31)
+# identifiers which break pyproject metadata and uv — gate on ASCII.
+SLUG_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
 UNSAFE_CHARS = ('"', "\\", "\n", "\r", "\t", "\x00")
 
 
@@ -43,12 +48,13 @@ def fail(message: str) -> None:
 
 
 def validate_slug() -> None:
-    if not PROJECT_SLUG.isidentifier():
+    if not SLUG_RE.match(PROJECT_SLUG):
         fail(
-            f"project_slug={PROJECT_SLUG!r} is not a valid Python identifier. "
-            "Use letters, digits, and underscores; must start with a letter or "
-            "underscore. Try setting project_name to a value that produces a "
-            "clean slug, or override project_slug at the prompt."
+            f"project_slug={PROJECT_SLUG!r} is not a valid ASCII Python "
+            "identifier. Use ASCII letters, digits, and underscores; must "
+            "start with a letter or underscore. Try setting project_name to "
+            "a value that produces a clean slug, or override project_slug "
+            "at the prompt."
         )
     if keyword.iskeyword(PROJECT_SLUG):
         fail(

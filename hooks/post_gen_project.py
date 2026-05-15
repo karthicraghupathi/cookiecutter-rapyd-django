@@ -63,6 +63,29 @@ def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
     return subprocess.run(cmd, cwd=PROJECT_DIR, env=_ENV, check=check)  # noqa: S603
 
 
+# Files the scaffold must ship. uv.lock comes from `uv sync`; the
+# requirements*.txt files come from the uv-export pre-commit hooks. Those
+# steps are individually best-effort, but a committed scaffold missing
+# them is broken — so verify before the initial commit.
+CRITICAL_GENERATED_FILES = ("uv.lock", "requirements.txt", "requirements-dev.txt")
+
+
+def verify_critical_files() -> None:
+    missing = [
+        name
+        for name in CRITICAL_GENERATED_FILES
+        if not (PROJECT_DIR / name).is_file()
+        or (PROJECT_DIR / name).stat().st_size == 0
+    ]
+    if missing:
+        fail(
+            "Expected generated file(s) missing or empty after dependency "
+            f"resolution: {', '.join(missing)}. The uv sync / uv-export "
+            "step likely failed above. Fix the cause and re-generate; the "
+            "scaffold was not committed."
+        )
+
+
 def run_pre_commit_with_autofix_handling() -> None:
     """Run `pre-commit run --all-files`, treating auto-fix exits as non-fatal.
 
@@ -103,6 +126,7 @@ def main() -> None:
     run(["git", "add", "."])
     run(["uv", "run", "pre-commit", "install"])
     run_pre_commit_with_autofix_handling()
+    verify_critical_files()
     run(["git", "add", "."])
     run(
         [
