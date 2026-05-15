@@ -4,6 +4,7 @@ Runs after the template is rendered, in the generated project's directory:
 - Creates .env from .env.example with a freshly generated SECRET_KEY.
 - Initializes a git repo and bootstraps the uv venv.
 - Installs and runs pre-commit (best-effort; non-fatal).
+- Makes an initial scaffold commit (identity scoped to that commit only).
 
 Cross-platform: uses subprocess + pathlib instead of bash.
 """
@@ -41,7 +42,7 @@ def create_env_file() -> None:
     src = PROJECT_DIR / ".env.example"
     dst = PROJECT_DIR / ".env"
     if not src.exists():
-        return
+        fail(".env.example not found — template is broken; cannot create .env")
     if dst.exists():
         info(".env already exists — skipping")
         return
@@ -98,14 +99,23 @@ def main() -> None:
     create_env_file()
 
     run(["git", "init", "-b", "main"])
-    run(["git", "config", "user.email", "scaffold@localhost"])
-    run(["git", "config", "user.name", "Cookiecutter Bootstrap"])
     run(["uv", "sync", "--all-groups", "--python", PYTHON_VERSION])
     run(["git", "add", "."])
     run(["uv", "run", "pre-commit", "install"])
     run_pre_commit_with_autofix_handling()
     run(["git", "add", "."])
-    run(["git", "commit", "-m", "chore: initial project scaffold"])
+    run(
+        [
+            "git",
+            "-c",
+            "user.email=scaffold@localhost",
+            "-c",
+            "user.name=Cookiecutter Bootstrap",
+            "commit",
+            "-m",
+            "chore: initial project scaffold",
+        ]
+    )
 
     info(f"Project ready at {PROJECT_DIR}")
 

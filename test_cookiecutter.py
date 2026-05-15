@@ -174,6 +174,32 @@ def test_env_file_has_secret_key(cookies):
 
 
 # ---------------------------------------------------------------------------
+# modernauth integration (template signature feature)
+# ---------------------------------------------------------------------------
+
+
+def test_modernauth_integration_present(cookies):
+    """modernauth custom-user feature survives generation: settings wire
+    AUTH_USER_MODEL + INSTALLED_APPS and the dependency is declared.
+
+    Regression guard: the Pipfile -> pyproject.toml migration (or any future
+    settings edit) must not silently drop the template's signature feature.
+    """
+    result = cookies.bake()
+
+    assert result.exit_code == 0, result.exception
+
+    settings = (
+        result.project_path / DEFAULT_SLUG / "config" / "settings.py"
+    ).read_text()
+    assert 'AUTH_USER_MODEL = "modernauth.User"' in settings
+    assert '"modernauth",' in settings
+
+    pyproject = (result.project_path / "pyproject.toml").read_text()
+    assert "django-rapyd-modernauth" in pyproject
+
+
+# ---------------------------------------------------------------------------
 # Generated project quality
 # ---------------------------------------------------------------------------
 
@@ -226,9 +252,11 @@ def test_post_gen_hook_requires_uv(tmp_path):
     """Hook exits non-zero with a friendly message when uv is not on PATH."""
     hook_path = Path(__file__).parent / "hooks" / "post_gen_project.py"
 
-    # Replace the Jinja token (unrendered on disk) with a valid Python literal.
-    rendered = hook_path.read_text().replace(
-        "{{cookiecutter.project_slug | tojson}}", '"test_project"'
+    # Replace both Jinja tokens (unrendered on disk) with valid Python literals.
+    rendered = (
+        hook_path.read_text()
+        .replace("{{cookiecutter.project_slug | tojson}}", '"test_project"')
+        .replace("{{cookiecutter.python_version | tojson}}", '"3.12"')
     )
     test_hook = tmp_path / "post_gen_project.py"
     test_hook.write_text(rendered)
@@ -243,6 +271,22 @@ def test_post_gen_hook_requires_uv(tmp_path):
 
     assert proc.returncode != 0
     assert "uv" in proc.stderr.lower()
+
+
+def test_generated_repo_has_no_local_git_identity(cookies):
+    """The scaffold commit must not pin a repo-local git identity.
+
+    The post-gen hook uses `git -c` to scope the bootstrap identity to the
+    single initial commit only. If it wrote a repo-local config instead,
+    every future developer commit would be mis-attributed to the placeholder.
+    """
+    result = cookies.bake()
+
+    assert result.exit_code == 0, result.exception
+    email = _run(["git", "config", "--local", "user.email"], result.project_path)
+    name = _run(["git", "config", "--local", "user.name"], result.project_path)
+    assert email.stdout.strip() == ""
+    assert name.stdout.strip() == ""
 
 
 # ---------------------------------------------------------------------------
