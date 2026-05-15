@@ -54,7 +54,7 @@ def create_env_file() -> None:
     info("Created .env with a random DJANGO_SECRET_KEY")
 
 
-_ENV = {k: v for k, v in os.environ.items() if k not in ("VIRTUAL_ENV", "VIRTUAL_ENV_PROMPT")}
+_ENV = {k: v for k, v in os.environ.items() if k not in ("VIRTUAL_ENV", "VIRTUAL_ENV_PROMPT", "UV_PYTHON")}
 
 
 def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
