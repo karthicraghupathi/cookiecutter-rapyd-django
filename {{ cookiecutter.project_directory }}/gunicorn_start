@@ -10,12 +10,12 @@ echo "Starting $NAME as `whoami`"
 
 # Activate the virtual environment
 cd $DJANGODIR
-source ../venv/bin/activate
+source ../.venv/bin/activate
 export PYTHONPATH=$DJANGODIR:$PYTHONPATH
 
 # Start your Django Unicorn
 # Programs meant to be run under supervisor should not daemonize themselves (do not use --daemon)
-exec ../venv/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
+exec ../.venv/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \
   --name $NAME \
   --timeout=3600 \
   --workers $NUM_WORKERS \

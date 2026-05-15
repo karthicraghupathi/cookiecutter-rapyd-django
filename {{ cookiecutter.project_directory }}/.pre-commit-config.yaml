@@ -1,1 +1,36 @@
-../.pre-commit-config.yaml
+default_language_version:
+  python: python3
+exclude: |
+  (?x)(
+    \.idea/|
+    \.venv/|
+    \.git/|
+    migrations/
+  )
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.12
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.12
+    hooks:
+      - id: uv-lock
+      - id: uv-export
+        name: uv-export (requirements.txt)
+        args: ["--no-dev", "--no-hashes", "--output-file=requirements.txt"]
+      - id: uv-export
+        name: uv-export (requirements-dev.txt)
+        args: ["--no-hashes", "--output-file=requirements-dev.txt"]

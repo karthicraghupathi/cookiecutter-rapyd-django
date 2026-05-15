@@ -1,17 +1,14 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
 default_language_version:
   python: python3
 exclude: |
   (?x)(
-    migrations/|
-    .idea/|
-    venv/|
-    .git/
+    \.venv/|
+    \.git/|
+    \{\{\s*cookiecutter\.project_directory\s*\}\}/
   )
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-json
@@ -20,19 +17,13 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.12
     hooks:
-      - id: isort
-  - repo: https://github.com/psf/black
-    rev: 22.6.0
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.12
     hooks:
-      - id: black
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0
-    hooks:
-      - id: flake8
-  - repo: https://github.com/karthicraghupathi/pipenv-requirements-pre-commit
-    rev: 0.0.1
-    hooks:
-    - id: pipenv-requirements
+      - id: uv-lock

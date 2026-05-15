@@ -1,15 +1,47 @@
-[tool.black]
-include = '\.pyi?$'
-exclude = '''
-/(
-  \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+[project]
+name = "cookiecutter-rapyd-django"
+version = "1.0.0"
+description = "Cookiecutter template for a Django project."
+requires-python = ">=3.10"
+authors = [{name = "Karthic Raghupathi"}]
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "cookiecutter",
+    "pytest",
+    "pytest-cookies",
+    "pre-commit",
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+# Excluded from ruff because they contain pre-render Jinja syntax:
+# - The template directory — file contents use {{ cookiecutter.* }} before rendering.
+# - hooks/ — hook scripts use unquoted Jinja (|tojson) for safe value rendering,
+#   which is invalid Python until cookiecutter substitutes it.
+# The brace-escape ([{][{]...) sidesteps ruff's glob alternation parser.
+extend-exclude = [
+    "[{][{] cookiecutter.project_directory [}][}]",
+    "hooks",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S"]
+# E501: line length (handled by formatter)
+# S101: assert in tests is fine
+# S607: PATH lookup of `git`/`uv` in the post-gen hook is intentional
+ignore = ["E501", "S101", "S607"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests routinely use subprocess.run with capture_output; subprocess rules are noise there.
+"test_*.py" = ["S404", "S603", "S607"]
+
+[tool.pytest.ini_options]
+testpaths = ["test_cookiecutter.py"]
+python_files = ["test_*.py"]
+# Don't recurse into the cookiecutter template directory; its tests/ contains
+# Jinja syntax that pytest can't import.
+norecursedirs = ["{{*"]
