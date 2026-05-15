@@ -10,6 +10,7 @@ Cross-platform: uses subprocess + pathlib instead of bash.
 
 from __future__ import annotations
 
+import os
 import secrets
 import shutil
 import subprocess
@@ -53,9 +54,12 @@ def create_env_file() -> None:
     info("Created .env with a random DJANGO_SECRET_KEY")
 
 
+_ENV = {k: v for k, v in os.environ.items() if k not in ("VIRTUAL_ENV", "VIRTUAL_ENV_PROMPT")}
+
+
 def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess:
     info(f"$ {' '.join(cmd)}")
-    return subprocess.run(cmd, cwd=PROJECT_DIR, check=check)  # noqa: S603
+    return subprocess.run(cmd, cwd=PROJECT_DIR, env=_ENV, check=check)  # noqa: S603
 
 
 def run_pre_commit_with_autofix_handling() -> None:
