@@ -34,7 +34,7 @@ LOGGING = {
     "handlers": {
         "console": {
             "formatter": "simple",
-            "level": env.log_level("LOG_LEVEL", "INFO"),
+            "level": env.log_level("LOG_LEVEL", logging.INFO),
             "class": "logging.StreamHandler",
         },
         "null": {"class": "logging.NullHandler"},
@@ -84,7 +84,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = TEMPLATE_DEBUG = env.bool("DEBUG", True)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", [])
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS", [])
 
 
 # Application definition

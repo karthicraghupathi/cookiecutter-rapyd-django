@@ -222,6 +222,15 @@ def test_generated_project_passes_pytest(cookies):
     assert proc.returncode == 0, f"pytest failed:\n{proc.stdout}\n{proc.stderr}"
 
 
+def test_generated_project_passes_mypy(cookies):
+    """Run `uv run mypy .` in the baked project; expect exit 0."""
+    result = cookies.bake()
+
+    assert result.exit_code == 0, result.exception
+    proc = _run(["uv", "run", "mypy", "."], result.project_path)
+    assert proc.returncode == 0, f"mypy failed:\n{proc.stdout}\n{proc.stderr}"
+
+
 def test_requirements_files_have_content(cookies):
     """requirements.txt (prod) and requirements-dev.txt (all) are non-empty.
 
