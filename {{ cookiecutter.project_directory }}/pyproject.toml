@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pre-commit", "pytest", "ruff"]
+dev = ["pre-commit", "pytest", "ruff", "mypy", "django-stubs"]
 
 [tool.ruff]
 line-length = 88
@@ -34,3 +34,13 @@ known-first-party = ["{{ cookiecutter.project_slug }}"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "{{ cookiecutter.python_version }}"
+plugins = ["mypy_django_plugin.main"]
+check_untyped_defs = true
+ignore_missing_imports = true
+exclude = '(^|/)migrations/'
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
