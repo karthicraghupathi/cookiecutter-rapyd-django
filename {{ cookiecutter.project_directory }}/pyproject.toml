@@ -37,6 +37,7 @@ testpaths = ["tests"]
 
 [tool.mypy]
 python_version = "{{ cookiecutter.python_version }}"
+mypy_path = "{{ cookiecutter.project_slug }}"
 plugins = ["mypy_django_plugin.main"]
 check_untyped_defs = true
 ignore_missing_imports = true
